@@ -1,0 +1,250 @@
+:root {
+  /* Cor: paleta de oficina — papel de ficha + carimbo */
+  --ink: #20241f;
+  --ink-soft: #4a4f43;
+  --paper: #ece8dd;
+  --paper-raised: #f7f5ee;
+  --line: #c7bfa9;
+  --rust: #b5502b; /* ação principal, "carimbo" */
+  --rust-dark: #8f3e21;
+  --copper: #3b6e64; /* status positivo (pronto/entregue) */
+  --amber: #c98a2b; /* status de espera */
+  --danger: #a23b2e; /* atrasado */
+
+  --font-sans: "IBM Plex Sans", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", "SFMono-Regular", monospace;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+a {
+  color: var(--rust-dark);
+}
+
+.app-shell {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 24px 20px 64px;
+}
+
+/* Cabeçalho estilo carimbo de ficha */
+.app-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  border-bottom: 2px solid var(--ink);
+  padding-bottom: 12px;
+  margin-bottom: 24px;
+}
+
+.app-header .brand {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: 15px;
+  letter-spacing: 0.02em;
+}
+
+.app-header .tenant-name {
+  font-size: 15px;
+  color: var(--ink-soft);
+}
+
+h1, h2, h3 {
+  font-family: var(--font-sans);
+  font-weight: 600;
+  margin: 0 0 8px;
+}
+
+h1 { font-size: 24px; }
+h2 { font-size: 18px; }
+
+.subtle {
+  color: var(--ink-soft);
+  font-size: 14px;
+}
+
+/* Ficha / ticket */
+.ticket {
+  background: var(--paper-raised);
+  border: 1px solid var(--line);
+  padding: 16px;
+  margin-bottom: 12px;
+}
+
+.ticket-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.ticket-os {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--rust-dark);
+}
+
+.ticket-meta {
+  font-size: 13px;
+  color: var(--ink-soft);
+  margin-top: 2px;
+}
+
+/* Etiqueta de status — carimbo, não pill com sombra */
+.status-tag {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 600;
+  padding: 3px 8px;
+  border: 1.5px solid currentColor;
+  white-space: nowrap;
+}
+
+.status-recebido { color: var(--ink-soft); }
+.status-em_analise { color: var(--rust-dark); }
+.status-aguardando_peca { color: var(--amber); }
+.status-pronto { color: var(--copper); }
+.status-entregue { color: var(--copper); }
+
+/* Formulários */
+.field {
+  margin-bottom: 16px;
+}
+
+.field label {
+  display: block;
+  font-size: 13px;
+  color: var(--ink-soft);
+  margin-bottom: 4px;
+}
+
+.field input,
+.field select,
+.field textarea {
+  width: 100%;
+  background: var(--paper-raised);
+  border: 1px solid var(--line);
+  padding: 10px;
+  font-family: var(--font-sans);
+  font-size: 15px;
+  color: var(--ink);
+}
+
+.field textarea {
+  min-height: 80px;
+  resize: vertical;
+}
+
+.btn {
+  display: inline-block;
+  background: var(--rust);
+  color: var(--paper-raised);
+  border: none;
+  padding: 11px 18px;
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.btn:hover { background: var(--rust-dark); }
+
+.btn-secondary {
+  background: transparent;
+  color: var(--ink);
+  border: 1.5px solid var(--ink);
+}
+
+.btn-secondary:hover { background: var(--ink); color: var(--paper-raised); }
+
+.fab-new {
+  position: fixed;
+  right: 20px;
+  bottom: 24px;
+  z-index: 10;
+}
+
+/* Linha do tempo pública — checkpoints reais, então numeração se justifica */
+.timeline {
+  list-style: none;
+  margin: 24px 0;
+  padding: 0;
+  border-left: 2px solid var(--line);
+}
+
+.timeline li {
+  position: relative;
+  padding: 4px 0 20px 20px;
+}
+
+.timeline li::before {
+  content: "";
+  position: absolute;
+  left: -7px;
+  top: 6px;
+  width: 12px;
+  height: 12px;
+  background: var(--paper);
+  border: 2px solid var(--line);
+  border-radius: 50%;
+}
+
+.timeline li.done::before {
+  background: var(--copper);
+  border-color: var(--copper);
+}
+
+.timeline li.current::before {
+  background: var(--rust);
+  border-color: var(--rust);
+}
+
+.timeline .step-label {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.timeline .step-date {
+  font-size: 13px;
+  color: var(--ink-soft);
+}
+
+.budget-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 12px 0;
+  font-size: 14px;
+}
+
+.budget-table td {
+  padding: 8px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.budget-total {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: 18px;
+  text-align: right;
+  padding-top: 8px;
+}
+
+.empty-state {
+  border: 1px dashed var(--line);
+  padding: 32px 20px;
+  text-align: center;
+  color: var(--ink-soft);
+}
