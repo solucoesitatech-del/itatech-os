@@ -24,6 +24,12 @@ export default function Dashboard() {
     <div className="app-shell">
       <Header right={tenant?.nome} eyebrow="painel do prestador" />
 
+      <div className="nav-row">
+        <Link to={`/painel/${tenantId}/clientes`} className="nav-link">
+          Clientes
+        </Link>
+      </div>
+
       <h1>Ordens de serviço</h1>
       <p className="subtle">
         {orders.length} {orders.length === 1 ? "ficha aberta" : "fichas abertas"}

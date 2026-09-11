@@ -52,6 +52,12 @@ export default function OrderDetail() {
     <div className="app-shell">
       <Header right={order.numero_os} eyebrow="ficha da OS" />
 
+      <div className="toolbar no-print">
+        <button className="btn btn-secondary" onClick={() => window.print()}>
+          Imprimir OS
+        </button>
+      </div>
+
       <span className={`status-tag status-${order.status}`}>
         {STATUS_LABELS[order.status]}
       </span>
@@ -59,28 +65,30 @@ export default function OrderDetail() {
       <h1 style={{ marginTop: 12 }}>Defeito relatado</h1>
       <p>{order.defeito_relatado}</p>
 
-      <h2>Avançar status</h2>
-      <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 24 }}>
-        {STATUS_ORDER.map((s) => (
-          <button
-            key={s}
-            className={s === order.status ? "btn" : "btn btn-secondary"}
-            onClick={() => avancarStatus(s)}
-            disabled={s === order.status}
-          >
-            {STATUS_LABELS[s]}
-          </button>
-        ))}
+      <div className="no-print">
+        <h2>Avançar status</h2>
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 24 }}>
+          {STATUS_ORDER.map((s) => (
+            <button
+              key={s}
+              className={s === order.status ? "btn" : "btn btn-secondary"}
+              onClick={() => avancarStatus(s)}
+              disabled={s === order.status}
+            >
+              {STATUS_LABELS[s]}
+            </button>
+          ))}
+        </div>
       </div>
 
       <h2>Link de acompanhamento</h2>
-      <p className="subtle">
+      <p className="subtle no-print">
         Envie esse link pelo WhatsApp — o cliente acompanha o status sem precisar
         perguntar.
       </p>
       <div className="ticket link-box">
         <span>{linkPublico}</span>
-        <button className="btn btn-secondary" onClick={copiarLink}>
+        <button className="btn btn-secondary no-print" onClick={copiarLink}>
           {copiado ? "Copiado" : "Copiar"}
         </button>
       </div>
@@ -108,7 +116,7 @@ export default function OrderDetail() {
           </p>
         </>
       ) : (
-        <form onSubmit={salvarOrcamento}>
+        <form onSubmit={salvarOrcamento} className="no-print">
           {itens.map((item, idx) => (
             <div key={idx} style={{ display: "flex", gap: 8, marginBottom: 8 }}>
               <input
@@ -148,6 +156,10 @@ export default function OrderDetail() {
           </button>
         </form>
       )}
+
+      <div className="signature-line">
+        <span>Assinatura do cliente</span>
+      </div>
     </div>
   );
 }

@@ -388,3 +388,89 @@ h2 {
   font-size: 13px;
   word-break: break-all;
 }
+
+/* ---------- Navegação secundária ---------- */
+.nav-row {
+  margin-bottom: var(--space-4);
+}
+
+.nav-link {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--rust-dark);
+  text-decoration: none;
+  border-bottom: 1px dashed var(--rust);
+  padding-bottom: 1px;
+}
+
+.back-link {
+  display: inline-block;
+  font-size: 14px;
+  color: var(--ink-soft);
+  text-decoration: none;
+  margin-bottom: var(--space-4);
+}
+
+.back-link:hover { color: var(--ink); }
+
+/* ---------- Alternância cliente/equipamento novo x existente ---------- */
+.toggle-row {
+  display: flex;
+  gap: var(--space-2);
+  margin-bottom: var(--space-3);
+}
+
+.btn-toggle {
+  background: transparent;
+  color: var(--ink-soft);
+  border: 1.5px solid var(--line);
+  box-shadow: none;
+  padding: 8px 14px;
+  font-size: 13px;
+}
+
+.btn-toggle.active {
+  background: var(--ink);
+  color: var(--paper-raised);
+  border-color: var(--ink);
+}
+
+/* ---------- Barra de ações do detalhe da OS ---------- */
+.toolbar {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: var(--space-3);
+}
+
+/* ---------- Linha de assinatura (também útil na impressão) ---------- */
+.signature-line {
+  margin-top: var(--space-7);
+  padding-top: var(--space-6);
+  border-top: 1px dashed var(--line);
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--ink-faint);
+}
+
+/* ---------- Impressão da ficha ---------- */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+
+  body {
+    background: #fff;
+    background-image: none;
+  }
+
+  .ticket {
+    box-shadow: none;
+    border-color: #999;
+  }
+
+  .app-shell {
+    max-width: 100%;
+    padding: 0;
+  }
+}
