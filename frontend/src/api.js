@@ -15,6 +15,8 @@ async function request(path, options = {}) {
 export const api = {
   // Tenant
   getTenant: (id) => request(`/api/tenants/${id}`),
+  updateTenant: (id, data) =>
+    request(`/api/tenants/${id}`, { method: "PATCH", body: JSON.stringify(data) }),
 
   // Clientes
   listCustomers: (tenantId) => request(`/api/customers/tenant/${tenantId}`),
@@ -50,6 +52,23 @@ export const api = {
   trackOrder: (token) => request(`/api/acompanhar/${token}`),
   approveBudget: (token) =>
     request(`/api/acompanhar/${token}/aprovar-orcamento`, { method: "POST" }),
+
+  // Financeiro (pagamentos)
+  createPayment: (data) =>
+    request(`/api/payments/`, { method: "POST", body: JSON.stringify(data) }),
+  markPaymentPaid: (id) =>
+    request(`/api/payments/${id}/pagar`, { method: "PATCH" }),
+  listPayments: (tenantId) => request(`/api/payments/tenant/${tenantId}`),
+  monthlyReport: (tenantId, ano, mes) =>
+    request(`/api/payments/tenant/${tenantId}/relatorio-mensal?ano=${ano}&mes=${mes}`),
+
+  // Estoque
+  listStockItems: (tenantId) => request(`/api/stock/tenant/${tenantId}`),
+  createStockItem: (data) =>
+    request(`/api/stock/`, { method: "POST", body: JSON.stringify(data) }),
+  updateStockItem: (id, data) =>
+    request(`/api/stock/${id}`, { method: "PATCH", body: JSON.stringify(data) }),
+  deleteStockItem: (id) => request(`/api/stock/${id}`, { method: "DELETE" }),
 };
 
 export const STATUS_LABELS = {
@@ -67,3 +86,9 @@ export const STATUS_ORDER = [
   "pronto",
   "entregue",
 ];
+
+export const PAYMENT_STATUS_LABELS = {
+  pendente: "Pendente",
+  pago: "Pago",
+  atrasado: "Atrasado",
+};

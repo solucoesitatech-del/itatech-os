@@ -44,6 +44,14 @@ class TenantCreate(BaseModel):
     whatsapp: Optional[str] = None
 
 
+class TenantUpdate(BaseModel):
+    nome: Optional[str] = None
+    categoria: Optional[str] = None
+    telefone: Optional[str] = None
+    whatsapp: Optional[str] = None
+    logo_url: Optional[str] = None
+
+
 # ---------- Customer ----------
 class Customer(BaseModel):
     id: str = Field(default_factory=new_id)
@@ -152,3 +160,29 @@ class PaymentCreate(BaseModel):
     tenant_id: str
     valor: float
     forma: Optional[str] = None
+
+
+# ---------- Estoque ----------
+class StockItem(BaseModel):
+    id: str = Field(default_factory=new_id)
+    tenant_id: str
+    nome: str
+    quantidade: int = 0
+    quantidade_minima: int = 0
+    preco_unitario: Optional[float] = None
+    criado_em: datetime = Field(default_factory=datetime.utcnow)
+
+
+class StockItemCreate(BaseModel):
+    tenant_id: str
+    nome: str
+    quantidade: int = 0
+    quantidade_minima: int = 0
+    preco_unitario: Optional[float] = None
+
+
+class StockItemUpdate(BaseModel):
+    nome: Optional[str] = None
+    quantidade: Optional[int] = None
+    quantidade_minima: Optional[int] = None
+    preco_unitario: Optional[float] = None

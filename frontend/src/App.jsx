@@ -6,6 +6,9 @@ import NewOrder from "./pages/NewOrder.jsx";
 import OrderDetail from "./pages/OrderDetail.jsx";
 import Track from "./pages/Track.jsx";
 import Customers from "./pages/Customers.jsx";
+import Financeiro from "./pages/Financeiro.jsx";
+import Estoque from "./pages/Estoque.jsx";
+import Configuracoes from "./pages/Configuracoes.jsx";
 import Placeholder from "./pages/Placeholder.jsx";
 
 export default function App() {
@@ -16,43 +19,16 @@ export default function App() {
       <Route path="/painel/:tenantId/clientes" element={<Customers />} />
       <Route path="/painel/:tenantId/nova" element={<NewOrder />} />
       <Route path="/painel/:tenantId/os/:orderId" element={<OrderDetail />} />
-      <Route
-        path="/painel/:tenantId/financeiro"
-        element={
-          <Placeholder
-            active="financeiro"
-            title="Financeiro"
-            description="Controle de pagamentos, garantias e faturamento do prestador."
-          />
-        }
-      />
-      <Route
-        path="/painel/:tenantId/estoque"
-        element={
-          <Placeholder
-            active="estoque"
-            title="Estoque"
-            description="Peças e componentes usados nos reparos."
-          />
-        }
-      />
+      <Route path="/painel/:tenantId/financeiro" element={<Financeiro />} />
+      <Route path="/painel/:tenantId/estoque" element={<Estoque />} />
+      <Route path="/painel/:tenantId/configuracoes" element={<Configuracoes />} />
       <Route
         path="/painel/:tenantId/relatorios"
         element={
           <Placeholder
             active="relatorios"
             title="Relatórios"
-            description="Relatório mensal de faturamento e histórico de atendimentos."
-          />
-        }
-      />
-      <Route
-        path="/painel/:tenantId/configuracoes"
-        element={
-          <Placeholder
-            active="config"
-            title="Configurações"
-            description="Dados da oficina, subdomínio e preferências do sistema."
+            description="Histórico detalhado e exportação de relatórios de atendimento."
           />
         }
       />

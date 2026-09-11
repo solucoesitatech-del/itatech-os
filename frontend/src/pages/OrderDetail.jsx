@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { api } from "../api.js";
+import { api, PAYMENT_STATUS_LABELS } from "../api.js";
 import Layout from "../components/Layout.jsx";
 import StatusBadge from "../components/StatusBadge.jsx";
 import StatusTimeline from "../components/StatusTimeline.jsx";
@@ -12,12 +12,24 @@ export default function OrderDetail() {
   const [order, setOrder] = useState(null);
   const [itens, setItens] = useState([{ descricao: "", valor: "" }]);
   const [salvandoOrcamento, setSalvandoOrcamento] = useState(false);
+  const [payment, setPayment] = useState(null);
+  const [registrandoPagamento, setRegistrandoPagamento] = useState(false);
+  const [marcandoPago, setMarcandoPago] = useState(false);
 
   function carregar() {
     api.getOrder(orderId).then(setOrder);
   }
 
   useEffect(carregar, [orderId]);
+
+  useEffect(() => {
+    if (order) {
+      api.listPayments(tenantId).then((payments) => {
+        setPayment(payments.find((p) => p.service_order_id === order.id) || null);
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [order?.id]);
 
   if (!order) {
     return (
@@ -43,6 +55,24 @@ export default function OrderDetail() {
     const atualizado = await api.setBudget(orderId, itensValidos);
     setOrder(atualizado);
     setSalvandoOrcamento(false);
+  }
+
+  async function registrarPagamento() {
+    setRegistrandoPagamento(true);
+    const novoPagamento = await api.createPayment({
+      service_order_id: order.id,
+      tenant_id: tenantId,
+      valor: order.orcamento.valor_total,
+    });
+    setPayment(novoPagamento);
+    setRegistrandoPagamento(false);
+  }
+
+  async function marcarPagamentoPago() {
+    setMarcandoPago(true);
+    const atualizado = await api.markPaymentPaid(payment.id);
+    setPayment(atualizado);
+    setMarcandoPago(false);
   }
 
   const atualizadoEm = order.atualizado_em
@@ -108,6 +138,34 @@ export default function OrderDetail() {
                 ? "Orçamento aprovado pelo cliente."
                 : "Aguardando aprovação do cliente pelo link."}
             </p>
+
+            <div className="no-print" style={{ marginTop: 12, paddingTop: 12, borderTop: "1px solid var(--border)" }}>
+              {payment ? (
+                <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                  <span className={`status-badge status-${payment.status}`}>
+                    <span className="dot" />
+                    {PAYMENT_STATUS_LABELS[payment.status]}
+                  </span>
+                  {payment.status !== "pago" && (
+                    <button
+                      className="btn btn-secondary btn-sm"
+                      onClick={marcarPagamentoPago}
+                      disabled={marcandoPago}
+                    >
+                      {marcandoPago ? "Salvando..." : "Marcar como pago"}
+                    </button>
+                  )}
+                </div>
+              ) : (
+                <button
+                  className="btn btn-secondary btn-sm"
+                  onClick={registrarPagamento}
+                  disabled={registrandoPagamento}
+                >
+                  {registrandoPagamento ? "Registrando..." : "Registrar cobrança no financeiro"}
+                </button>
+              )}
+            </div>
           </>
         ) : (
           <form onSubmit={salvarOrcamento} className="no-print">

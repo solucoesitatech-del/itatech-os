@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException
 from typing import List
-from models.schemas import Tenant, TenantCreate
+from models.schemas import Tenant, TenantCreate, TenantUpdate
 from database import tenants_collection
 
 router = APIRouter(prefix="/api/tenants", tags=["tenants"])
@@ -36,3 +36,17 @@ async def get_tenant_by_subdomain(subdominio: str):
     if not tenant:
         raise HTTPException(status_code=404, detail="Prestador não encontrado")
     return Tenant(**tenant)
+
+
+@router.patch("/{tenant_id}", response_model=Tenant)
+async def update_tenant(tenant_id: str, data: TenantUpdate):
+    tenant = await tenants_collection.find_one({"id": tenant_id})
+    if not tenant:
+        raise HTTPException(status_code=404, detail="Prestador não encontrado")
+
+    updates = {k: v for k, v in data.dict(exclude_unset=True).items() if v is not None}
+    if updates:
+        await tenants_collection.update_one({"id": tenant_id}, {"$set": updates})
+
+    updated = await tenants_collection.find_one({"id": tenant_id})
+    return Tenant(**updated)

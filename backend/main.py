@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import os
 
-from routers import tenants, customers, service_orders, payments
+from routers import tenants, customers, service_orders, payments, stock
 
 app = FastAPI(title="iTATech OS - Ordem de Serviço")
 
@@ -22,6 +22,7 @@ app.include_router(customers.equipment_router)
 app.include_router(service_orders.router)
 app.include_router(service_orders.public_router)
 app.include_router(payments.router)
+app.include_router(stock.router)
 
 
 @app.get("/api/health")

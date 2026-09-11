@@ -720,3 +720,43 @@ h2 { font-size: 14px; color: var(--ink-soft); font-weight: 600; margin-top: 0; }
   .content-area { max-width: 100%; padding: 0; }
   .card { box-shadow: none; border-color: #ccc; }
 }
+
+/* ================= STATUS DE PAGAMENTO (financeiro) ================= */
+.status-pendente { color: var(--status-aguardando_peca); background: #fdf0dc; }
+.status-pago { color: var(--status-pronto); background: #e4f6e9; }
+.status-atrasado { color: var(--danger); background: #fbe1df; }
+
+/* ================= ESTOQUE ================= */
+.qty-control {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.qty-btn {
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-sm);
+  font-weight: 700;
+  line-height: 1;
+}
+
+.qty-value {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  min-width: 24px;
+  text-align: center;
+}
+
+.low-stock-badge {
+  color: var(--danger);
+  background: #fbe1df;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 999px;
+}
