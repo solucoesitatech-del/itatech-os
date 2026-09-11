@@ -35,7 +35,7 @@ export default function App() {
         }
       />
       <Route path="/acompanhar/:token" element={<Track />} />
-      <Route path="*" element={<Navigate to="/painel" replace />} />
+      <Route path="*" element={<Navigate to="/superadmin" replace />} />
     </Routes>
   );
 }
