@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { api } from "../api.js";
-import Header from "../components/Header.jsx";
+import Layout from "../components/Layout.jsx";
 
 const initialForm = { nome: "", telefone: "", email: "", endereco: "" };
 
@@ -35,49 +35,27 @@ export default function Customers() {
   }
 
   return (
-    <div className="app-shell">
-      <Header eyebrow="clientes cadastrados" />
-
-      <Link to={`/painel/${tenantId}`} className="back-link">
-        ← Ordens de serviço
-      </Link>
-
-      <h1>Clientes</h1>
-      <p className="subtle">
-        {customers.length}{" "}
-        {customers.length === 1 ? "cliente cadastrado" : "clientes cadastrados"}
-      </p>
+    <Layout tenantId={tenantId} active="clients">
+      <div className="page-header">
+        <div>
+          <h1>Clientes</h1>
+          <p className="subtle">
+            {customers.length}{" "}
+            {customers.length === 1 ? "cliente cadastrado" : "clientes cadastrados"}
+          </p>
+        </div>
+        {!showForm && (
+          <button className="btn" onClick={() => setShowForm(true)}>
+            + Novo cliente
+          </button>
+        )}
+      </div>
 
       {loading && <p className="subtle">Carregando...</p>}
 
-      {!loading && customers.length === 0 && !showForm && (
-        <div className="empty-state">
-          Nenhum cliente ainda. Cadastre um cliente aqui, ou pelo formulário de
-          "Nova OS" mesmo.
-        </div>
-      )}
-
-      {customers.map((c) => (
-        <div key={c.id} className="ticket">
-          <div className="ticket-row">
-            <div>
-              <div className="ticket-os">{c.nome}</div>
-              <div className="ticket-meta">{c.telefone}</div>
-              {c.email && <div className="ticket-meta">{c.email}</div>}
-            </div>
-          </div>
-        </div>
-      ))}
-
-      {!showForm && (
-        <button className="btn btn-secondary" onClick={() => setShowForm(true)}>
-          + Novo cliente
-        </button>
-      )}
-
       {showForm && (
-        <form onSubmit={salvar} className="ticket">
-          <h2 style={{ marginTop: 0 }}>Novo cliente</h2>
+        <form onSubmit={salvar} className="card">
+          <div className="card-title">Novo cliente</div>
           <div className="field">
             <label htmlFor="nome">Nome</label>
             <input id="nome" required value={form.nome} onChange={set("nome")} />
@@ -98,11 +76,7 @@ export default function Customers() {
           </div>
           <div className="field">
             <label htmlFor="endereco">Endereço (opcional)</label>
-            <input
-              id="endereco"
-              value={form.endereco}
-              onChange={set("endereco")}
-            />
+            <input id="endereco" value={form.endereco} onChange={set("endereco")} />
           </div>
           <div style={{ display: "flex", gap: 8 }}>
             <button className="btn" type="submit" disabled={salvando}>
@@ -118,6 +92,29 @@ export default function Customers() {
           </div>
         </form>
       )}
-    </div>
+
+      {!loading && customers.length === 0 && !showForm && (
+        <div className="empty-state">
+          Nenhum cliente ainda. Cadastre um cliente aqui, ou pelo formulário de
+          "Nova OS" mesmo.
+        </div>
+      )}
+
+      {customers.length > 0 && (
+        <div className="card">
+          {customers.map((c) => (
+            <div key={c.id} className="card-list-item">
+              <div>
+                <div className="card-list-os">{c.nome}</div>
+                <div className="card-list-meta">
+                  {c.telefone}
+                  {c.email ? ` · ${c.email}` : ""}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </Layout>
   );
 }

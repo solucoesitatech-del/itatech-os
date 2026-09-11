@@ -1,14 +1,17 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import { api, STATUS_LABELS, STATUS_ORDER } from "../api.js";
-import Header from "../components/Header.jsx";
+import { Link, useParams } from "react-router-dom";
+import { api } from "../api.js";
+import Layout from "../components/Layout.jsx";
+import StatusBadge from "../components/StatusBadge.jsx";
+import StatusTimeline from "../components/StatusTimeline.jsx";
+import OrderInfoCard from "../components/OrderInfoCard.jsx";
+import TrackingLinkCard from "../components/TrackingLinkCard.jsx";
 
 export default function OrderDetail() {
   const { tenantId, orderId } = useParams();
   const [order, setOrder] = useState(null);
   const [itens, setItens] = useState([{ descricao: "", valor: "" }]);
   const [salvandoOrcamento, setSalvandoOrcamento] = useState(false);
-  const [copiado, setCopiado] = useState(false);
 
   function carregar() {
     api.getOrder(orderId).then(setOrder);
@@ -18,9 +21,9 @@ export default function OrderDetail() {
 
   if (!order) {
     return (
-      <div className="app-shell">
+      <Layout tenantId={tenantId} active="orders">
         <p className="subtle">Carregando ficha...</p>
-      </div>
+      </Layout>
     );
   }
 
@@ -42,124 +45,114 @@ export default function OrderDetail() {
     setSalvandoOrcamento(false);
   }
 
-  function copiarLink() {
-    navigator.clipboard.writeText(linkPublico);
-    setCopiado(true);
-    setTimeout(() => setCopiado(false), 2000);
-  }
+  const atualizadoEm = order.atualizado_em
+    ? new Date(order.atualizado_em).toLocaleString("pt-BR")
+    : null;
 
   return (
-    <div className="app-shell">
-      <Header right={order.numero_os} eyebrow="ficha da OS" />
+    <Layout tenantId={tenantId} active="orders">
+      <Link to={`/painel/${tenantId}`} className="back-link no-print">
+        ← Voltar para Ordens
+      </Link>
 
-      <div className="toolbar no-print">
-        <button className="btn btn-secondary" onClick={() => window.print()}>
+      <div className="detail-header">
+        <div className="detail-header-left">
+          <span className="detail-os-number">OS #{order.numero_os.replace(/^OS-/, "")}</span>
+          <StatusBadge status={order.status} />
+        </div>
+        <button className="btn btn-secondary no-print" onClick={() => window.print()}>
           Imprimir OS
         </button>
       </div>
 
-      <span className={`status-tag status-${order.status}`}>
-        {STATUS_LABELS[order.status]}
-      </span>
+      <OrderInfoCard title="Serviço / Equipamento">
+        <div className="faint" style={{ marginBottom: 4 }}>Defeito relatado</div>
+        <p style={{ margin: 0 }}>{order.defeito_relatado}</p>
+      </OrderInfoCard>
 
-      <h1 style={{ marginTop: 12 }}>Defeito relatado</h1>
-      <p>{order.defeito_relatado}</p>
+      <div className="card">
+        <div className="card-title">Status</div>
+        <StatusBadge status={order.status} large />
+        {atualizadoEm && (
+          <p className="faint" style={{ marginTop: 10, marginBottom: 0 }}>
+            Última atualização: {atualizadoEm}
+          </p>
+        )}
 
-      <div className="no-print">
-        <h2>Avançar status</h2>
-        <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 24 }}>
-          {STATUS_ORDER.map((s) => (
-            <button
-              key={s}
-              className={s === order.status ? "btn" : "btn btn-secondary"}
-              onClick={() => avancarStatus(s)}
-              disabled={s === order.status}
-            >
-              {STATUS_LABELS[s]}
-            </button>
-          ))}
+        <div className="no-print" style={{ marginTop: 20 }}>
+          <StatusTimeline status={order.status} onSelect={avancarStatus} />
         </div>
       </div>
 
-      <h2>Link de acompanhamento</h2>
-      <p className="subtle no-print">
-        Envie esse link pelo WhatsApp — o cliente acompanha o status sem precisar
-        perguntar.
-      </p>
-      <div className="ticket link-box">
-        <span>{linkPublico}</span>
-        <button className="btn btn-secondary no-print" onClick={copiarLink}>
-          {copiado ? "Copiado" : "Copiar"}
-        </button>
-      </div>
+      <TrackingLinkCard link={linkPublico} />
 
-      <h2 style={{ marginTop: 24 }}>Orçamento</h2>
-      {order.orcamento?.itens?.length > 0 ? (
-        <>
-          <table className="budget-table">
-            <tbody>
-              {order.orcamento.itens.map((i, idx) => (
-                <tr key={idx}>
-                  <td>{i.descricao}</td>
-                  <td style={{ textAlign: "right" }}>R$ {i.valor.toFixed(2)}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-          <div className="budget-total">
-            Total: R$ {order.orcamento.valor_total.toFixed(2)}
-          </div>
-          <p className="subtle">
-            {order.orcamento.aprovado
-              ? "Orçamento aprovado pelo cliente."
-              : "Aguardando aprovação do cliente pelo link."}
-          </p>
-        </>
-      ) : (
-        <form onSubmit={salvarOrcamento} className="no-print">
-          {itens.map((item, idx) => (
-            <div key={idx} style={{ display: "flex", gap: 8, marginBottom: 8 }}>
-              <input
-                placeholder="Descrição (ex: peça, mão de obra)"
-                value={item.descricao}
-                onChange={(e) => {
-                  const novos = [...itens];
-                  novos[idx].descricao = e.target.value;
-                  setItens(novos);
-                }}
-              />
-              <input
-                placeholder="Valor"
-                type="number"
-                step="0.01"
-                style={{ maxWidth: 110 }}
-                value={item.valor}
-                onChange={(e) => {
-                  const novos = [...itens];
-                  novos[idx].valor = e.target.value;
-                  setItens(novos);
-                }}
-              />
+      <div className="card">
+        <div className="card-title">Orçamento</div>
+        {order.orcamento?.itens?.length > 0 ? (
+          <>
+            <table className="budget-table">
+              <tbody>
+                {order.orcamento.itens.map((i, idx) => (
+                  <tr key={idx}>
+                    <td>{i.descricao}</td>
+                    <td style={{ textAlign: "right" }}>R$ {i.valor.toFixed(2)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            <div className="budget-total">
+              Total: R$ {order.orcamento.valor_total.toFixed(2)}
             </div>
-          ))}
-          <button
-            type="button"
-            className="btn btn-secondary"
-            style={{ marginBottom: 16 }}
-            onClick={() => setItens([...itens, { descricao: "", valor: "" }])}
-          >
-            + item
-          </button>
-          <br />
-          <button className="btn" type="submit" disabled={salvandoOrcamento}>
-            {salvandoOrcamento ? "Salvando..." : "Salvar orçamento"}
-          </button>
-        </form>
-      )}
-
-      <div className="signature-line">
-        <span>Assinatura do cliente</span>
+            <p className="subtle">
+              {order.orcamento.aprovado
+                ? "Orçamento aprovado pelo cliente."
+                : "Aguardando aprovação do cliente pelo link."}
+            </p>
+          </>
+        ) : (
+          <form onSubmit={salvarOrcamento} className="no-print">
+            {itens.map((item, idx) => (
+              <div key={idx} style={{ display: "flex", gap: 8, marginBottom: 8 }}>
+                <input
+                  placeholder="Descrição (ex: peça, mão de obra)"
+                  value={item.descricao}
+                  onChange={(e) => {
+                    const novos = [...itens];
+                    novos[idx].descricao = e.target.value;
+                    setItens(novos);
+                  }}
+                />
+                <input
+                  placeholder="Valor"
+                  type="number"
+                  step="0.01"
+                  style={{ maxWidth: 110 }}
+                  value={item.valor}
+                  onChange={(e) => {
+                    const novos = [...itens];
+                    novos[idx].valor = e.target.value;
+                    setItens(novos);
+                  }}
+                />
+              </div>
+            ))}
+            <button
+              type="button"
+              className="btn btn-secondary btn-sm"
+              style={{ marginBottom: 16 }}
+              onClick={() => setItens([...itens, { descricao: "", valor: "" }])}
+            >
+              + item
+            </button>
+            <br />
+            <button className="btn" type="submit" disabled={salvandoOrcamento}>
+              {salvandoOrcamento ? "Salvando..." : "Salvar orçamento"}
+            </button>
+          </form>
+        )}
       </div>
-    </div>
+
+      <div className="signature-line">Assinatura do cliente</div>
+    </Layout>
   );
 }

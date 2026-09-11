@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { api } from "../api.js";
-import Header from "../components/Header.jsx";
+import Layout from "../components/Layout.jsx";
 
 const initialNewCustomer = { clienteNome: "", clienteTelefone: "" };
 const initialNewEquipment = { equipTipo: "", equipMarca: "", equipModelo: "" };
@@ -93,12 +93,14 @@ export default function NewOrder() {
     !!defeito;
 
   return (
-    <div className="app-shell">
-      <Header eyebrow="nova ficha" />
+    <Layout tenantId={tenantId} active="orders">
+      <Link to={`/painel/${tenantId}`} className="back-link">
+        ← Voltar para Ordens
+      </Link>
 
       <h1>Nova ordem de serviço</h1>
 
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} className="card">
         <h2>Cliente</h2>
         {customers.length > 0 && (
           <div className="toggle-row">
@@ -235,6 +237,6 @@ export default function NewOrder() {
           {salvando ? "Salvando..." : "Abrir OS"}
         </button>
       </form>
-    </div>
+    </Layout>
   );
 }
