@@ -15,6 +15,9 @@ async function request(path, options = {}) {
 export const api = {
   // Tenant
   getTenant: (id) => request(`/api/tenants/${id}`),
+  listTenants: () => request(`/api/tenants/`),
+  createTenant: (data) =>
+    request(`/api/tenants/`, { method: "POST", body: JSON.stringify(data) }),
   updateTenant: (id, data) =>
     request(`/api/tenants/${id}`, { method: "PATCH", body: JSON.stringify(data) }),
 

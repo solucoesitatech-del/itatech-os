@@ -951,6 +951,24 @@ h2 { font-size: 14px; color: var(--ink-soft); font-weight: 600; margin-top: 0; }
   margin-bottom: var(--space-5);
 }
 
+/* ================= PAINEL ADMINISTRATIVO (dono do sistema) ================= */
+.superadmin-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 24px;
+  background: var(--sidebar-bg);
+  color: #fff;
+}
+
+.superadmin-header .brand-name { color: #fff; }
+
+.superadmin-content {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: var(--space-6) var(--space-4) 64px;
+}
+
 .public-status-wrap {
   display: flex;
   justify-content: center;

@@ -10,10 +10,12 @@ import Financeiro from "./pages/Financeiro.jsx";
 import Estoque from "./pages/Estoque.jsx";
 import Configuracoes from "./pages/Configuracoes.jsx";
 import Placeholder from "./pages/Placeholder.jsx";
+import SuperAdmin from "./pages/SuperAdmin.jsx";
 
 export default function App() {
   return (
     <Routes>
+      <Route path="/superadmin" element={<SuperAdmin />} />
       <Route path="/painel/:tenantId" element={<Dashboard />} />
       <Route path="/painel/:tenantId/visao-geral" element={<Overview />} />
       <Route path="/painel/:tenantId/clientes" element={<Customers />} />
