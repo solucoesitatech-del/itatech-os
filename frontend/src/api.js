@@ -20,6 +20,7 @@ export const api = {
 
   // Clientes
   listCustomers: (tenantId) => request(`/api/customers/tenant/${tenantId}`),
+  getCustomer: (id) => request(`/api/customers/${id}`),
   createCustomer: (data) =>
     request(`/api/customers/`, { method: "POST", body: JSON.stringify(data) }),
   listCustomerEquipment: (customerId) =>

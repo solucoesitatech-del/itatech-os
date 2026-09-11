@@ -65,6 +65,9 @@ export default function Overview() {
           <h1>Visão geral</h1>
           <p className="subtle">Resumo das ordens de serviço em aberto e concluídas.</p>
         </div>
+        <Link to={`/painel/${tenantId}/nova`} className="btn">
+          + Nova Ordem de Serviço
+        </Link>
       </div>
 
       {loading && <p className="subtle">Carregando...</p>}

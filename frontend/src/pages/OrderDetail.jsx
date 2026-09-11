@@ -12,6 +12,7 @@ export default function OrderDetail() {
   const { tenantId, orderId } = useParams();
   const [order, setOrder] = useState(null);
   const [equipment, setEquipment] = useState(null);
+  const [customer, setCustomer] = useState(null);
   const [itens, setItens] = useState([{ descricao: "", valor: "" }]);
   const [salvandoOrcamento, setSalvandoOrcamento] = useState(false);
   const [payment, setPayment] = useState(null);
@@ -30,6 +31,13 @@ export default function OrderDetail() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [order?.equipment_id]);
+
+  useEffect(() => {
+    if (order?.customer_id) {
+      api.getCustomer(order.customer_id).then(setCustomer).catch(() => {});
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [order?.customer_id]);
 
   useEffect(() => {
     if (order) {
@@ -111,37 +119,39 @@ export default function OrderDetail() {
         </button>
       </div>
 
-      <div className={`status-highlight-card status-${order.status}`}>
-        <div className="status-highlight-icon">
-          <IconCheckCircle />
-        </div>
-        <div>
-          <div className="status-highlight-eyebrow">Status atual</div>
-          <div className="status-highlight-label">
-            {STATUS_LABELS[order.status].toUpperCase()}
+      <div className="detail-top-grid">
+        <div className={`status-highlight-card status-${order.status}`}>
+          <div className="status-highlight-icon">
+            <IconCheckCircle width={24} height={24} />
           </div>
-          {atualizadoEm && (
-            <div className="faint">Última atualização: {atualizadoEm}</div>
-          )}
+          <div>
+            <div className="status-highlight-eyebrow">Status atual</div>
+            <div className="status-highlight-label">
+              {STATUS_LABELS[order.status].toUpperCase()}
+            </div>
+            {atualizadoEm && (
+              <div className="faint">Última atualização: {atualizadoEm}</div>
+            )}
+          </div>
         </div>
-      </div>
 
-      <OrderInfoCard title="Serviço / Equipamento">
-        {infoFields.length > 0 && (
-          <div className="info-grid" style={{ marginBottom: 16 }}>
-            {infoFields.map((f) => (
-              <div className="info-field" key={f.label}>
-                <div className="label">{f.label}</div>
-                <div className="value">{f.value}</div>
-              </div>
-            ))}
+        <OrderInfoCard title="Serviço / Equipamento">
+          {infoFields.length > 0 && (
+            <div className="info-grid" style={{ marginBottom: 16 }}>
+              {infoFields.map((f) => (
+                <div className="info-field" key={f.label}>
+                  <div className="label">{f.label}</div>
+                  <div className="value">{f.value}</div>
+                </div>
+              ))}
+            </div>
+          )}
+          <div className="info-field full">
+            <div className="label">Defeito relatado</div>
+            <div className="value">{order.defeito_relatado}</div>
           </div>
-        )}
-        <div className="info-field full">
-          <div className="label">Defeito relatado</div>
-          <div className="value">{order.defeito_relatado}</div>
-        </div>
-      </OrderInfoCard>
+        </OrderInfoCard>
+      </div>
 
       <div className="card">
         <div className="card-title">Atualizar status</div>
@@ -150,7 +160,7 @@ export default function OrderDetail() {
         </div>
       </div>
 
-      <TrackingLinkCard link={linkPublico} />
+      <TrackingLinkCard link={linkPublico} phone={customer?.telefone} />
 
       <div className="card">
         <div className="card-title">Orçamento</div>

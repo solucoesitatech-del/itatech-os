@@ -14,9 +14,7 @@ export default function TrackingLinkCard({ link, phone }) {
     `Olá! Você pode acompanhar o andamento da sua Ordem de Serviço pelo link abaixo: ${link}`
   );
   const digitos = phone ? phone.replace(/\D/g, "") : "";
-  const whatsappUrl = digitos
-    ? `https://wa.me/55${digitos}?text=${mensagem}`
-    : `https://wa.me/?text=${mensagem}`;
+  const whatsappUrl = digitos ? `https://wa.me/55${digitos}?text=${mensagem}` : null;
 
   return (
     <div className="card no-print">
@@ -31,16 +29,18 @@ export default function TrackingLinkCard({ link, phone }) {
           {copiado ? <IconCheck /> : <IconCopy />}
           {copiado ? "Copiado" : "Copiar"}
         </button>
-        <a
-          className="btn"
-          href={whatsappUrl}
-          target="_blank"
-          rel="noreferrer"
-          style={{ background: "#25d366", textDecoration: "none", flex: 1 }}
-        >
-          <IconWhatsapp />
-          Enviar pelo WhatsApp
-        </a>
+        {whatsappUrl && (
+          <a
+            className="btn"
+            href={whatsappUrl}
+            target="_blank"
+            rel="noreferrer"
+            style={{ background: "#25d366", textDecoration: "none", flex: 1 }}
+          >
+            <IconWhatsapp />
+            Enviar pelo WhatsApp
+          </a>
+        )}
       </div>
     </div>
   );
