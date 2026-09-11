@@ -78,6 +78,68 @@ export function IconSettings(props) {
   );
 }
 
+export function IconStack(props) {
+  return (
+    <svg {...base} className="icon" {...props}>
+      <path d="M12 3 3 8l9 5 9-5-9-5Z" />
+      <path d="M3 13l9 5 9-5M3 8v0" />
+    </svg>
+  );
+}
+
+export function IconClock(props) {
+  return (
+    <svg {...base} className="icon" {...props}>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M12 7v5l3.5 2" />
+    </svg>
+  );
+}
+
+export function IconSearch(props) {
+  return (
+    <svg {...base} className="icon" {...props}>
+      <circle cx="11" cy="11" r="7" />
+      <path d="m20 20-3.4-3.4" />
+    </svg>
+  );
+}
+
+export function IconPackage(props) {
+  return (
+    <svg {...base} className="icon" {...props}>
+      <path d="M21 8.5 12 4 3 8.5 12 13l9-4.5Z" />
+      <path d="M3 8.5V16l9 4.5 9-4.5V8.5M12 13v7.5" />
+    </svg>
+  );
+}
+
+export function IconThumbUp(props) {
+  return (
+    <svg {...base} className="icon" {...props}>
+      <path d="M7 11v9H4v-9h3Zm0 0 3.5-7a2 2 0 0 1 2 2.2L11.8 9H18a2 2 0 0 1 1.9 2.7l-2 6A2 2 0 0 1 16 19H7" />
+    </svg>
+  );
+}
+
+export function IconCheckCircle(props) {
+  return (
+    <svg {...base} className="icon" {...props}>
+      <circle cx="12" cy="12" r="9" />
+      <path d="m8.5 12.5 2.5 2.5 4.5-5" />
+    </svg>
+  );
+}
+
+export function IconClipboard(props) {
+  return (
+    <svg {...base} className="icon" {...props}>
+      <rect x="6" y="4" width="12" height="17" rx="2" />
+      <path d="M9 4V3a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v1M9 11h6M9 15h6" />
+    </svg>
+  );
+}
+
 export function IconMenu(props) {
   return (
     <svg {...base} width={22} height={22} {...props}>

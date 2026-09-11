@@ -1,15 +1,17 @@
 import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { api, PAYMENT_STATUS_LABELS } from "../api.js";
+import { api, PAYMENT_STATUS_LABELS, STATUS_LABELS } from "../api.js";
 import Layout from "../components/Layout.jsx";
 import StatusBadge from "../components/StatusBadge.jsx";
 import StatusTimeline from "../components/StatusTimeline.jsx";
 import OrderInfoCard from "../components/OrderInfoCard.jsx";
 import TrackingLinkCard from "../components/TrackingLinkCard.jsx";
+import { IconCheckCircle } from "../components/icons.jsx";
 
 export default function OrderDetail() {
   const { tenantId, orderId } = useParams();
   const [order, setOrder] = useState(null);
+  const [equipment, setEquipment] = useState(null);
   const [itens, setItens] = useState([{ descricao: "", valor: "" }]);
   const [salvandoOrcamento, setSalvandoOrcamento] = useState(false);
   const [payment, setPayment] = useState(null);
@@ -21,6 +23,13 @@ export default function OrderDetail() {
   }
 
   useEffect(carregar, [orderId]);
+
+  useEffect(() => {
+    if (order?.equipment_id) {
+      api.getEquipment(order.equipment_id).then(setEquipment).catch(() => {});
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [order?.equipment_id]);
 
   useEffect(() => {
     if (order) {
@@ -79,6 +88,13 @@ export default function OrderDetail() {
     ? new Date(order.atualizado_em).toLocaleString("pt-BR")
     : null;
 
+  const infoFields = [
+    { label: "Equipamento", value: equipment?.tipo },
+    { label: "Marca", value: equipment?.marca },
+    { label: "Modelo", value: equipment?.modelo },
+    { label: "Número de série", value: equipment?.numero_serie },
+  ].filter((f) => f.value);
+
   return (
     <Layout tenantId={tenantId} active="orders">
       <Link to={`/painel/${tenantId}`} className="back-link no-print">
@@ -95,21 +111,41 @@ export default function OrderDetail() {
         </button>
       </div>
 
+      <div className={`status-highlight-card status-${order.status}`}>
+        <div className="status-highlight-icon">
+          <IconCheckCircle />
+        </div>
+        <div>
+          <div className="status-highlight-eyebrow">Status atual</div>
+          <div className="status-highlight-label">
+            {STATUS_LABELS[order.status].toUpperCase()}
+          </div>
+          {atualizadoEm && (
+            <div className="faint">Última atualização: {atualizadoEm}</div>
+          )}
+        </div>
+      </div>
+
       <OrderInfoCard title="Serviço / Equipamento">
-        <div className="faint" style={{ marginBottom: 4 }}>Defeito relatado</div>
-        <p style={{ margin: 0 }}>{order.defeito_relatado}</p>
+        {infoFields.length > 0 && (
+          <div className="info-grid" style={{ marginBottom: 16 }}>
+            {infoFields.map((f) => (
+              <div className="info-field" key={f.label}>
+                <div className="label">{f.label}</div>
+                <div className="value">{f.value}</div>
+              </div>
+            ))}
+          </div>
+        )}
+        <div className="info-field full">
+          <div className="label">Defeito relatado</div>
+          <div className="value">{order.defeito_relatado}</div>
+        </div>
       </OrderInfoCard>
 
       <div className="card">
-        <div className="card-title">Status</div>
-        <StatusBadge status={order.status} large />
-        {atualizadoEm && (
-          <p className="faint" style={{ marginTop: 10, marginBottom: 0 }}>
-            Última atualização: {atualizadoEm}
-          </p>
-        )}
-
-        <div className="no-print" style={{ marginTop: 20 }}>
+        <div className="card-title">Atualizar status</div>
+        <div className="no-print">
           <StatusTimeline status={order.status} onSelect={avancarStatus} />
         </div>
       </div>

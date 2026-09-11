@@ -8,7 +8,9 @@ export default function Sidebar({ tenantId, tenant, active, onNavigate }) {
   return (
     <>
       <div className="sidebar-brand">
-        <img src="/logo.jpg" alt="iTATech" className="brand-logo" />
+        <span className="brand-logo-chip">
+          <img src="/logo.jpg" alt="iTATech" className="brand-logo" />
+        </span>
         <span className="brand-name">iTATech OS</span>
       </div>
 

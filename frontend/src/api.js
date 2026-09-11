@@ -28,6 +28,7 @@ export const api = {
   // Equipamentos
   createEquipment: (data) =>
     request(`/api/equipment/`, { method: "POST", body: JSON.stringify(data) }),
+  getEquipment: (id) => request(`/api/equipment/${id}`),
 
   // Ordens de serviço
   listOrders: (tenantId) => request(`/api/service-orders/tenant/${tenantId}`),

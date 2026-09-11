@@ -55,7 +55,9 @@ export default function Layout({ tenantId, active, children }) {
             <IconMenu />
           </button>
           <span className="brand-name" style={{ display: "flex", alignItems: "center", gap: 8 }}>
-            <img src="/logo.jpg" alt="iTATech" className="brand-logo" style={{ width: 22, height: 22 }} />
+            <span className="brand-logo-chip" style={{ width: 26, height: 26 }}>
+              <img src="/logo.jpg" alt="iTATech" className="brand-logo" />
+            </span>
             iTATech OS
           </span>
         </div>
