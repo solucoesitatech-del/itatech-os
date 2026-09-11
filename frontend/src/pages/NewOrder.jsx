@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { api } from "../api.js";
+import Header from "../components/Header.jsx";
 
 const initialState = {
   clienteNome: "",
@@ -53,9 +54,7 @@ export default function NewOrder() {
 
   return (
     <div className="app-shell">
-      <header className="app-header">
-        <span className="brand">iTATech OS</span>
-      </header>
+      <Header eyebrow="nova ficha" />
 
       <h1>Nova ordem de serviço</h1>
 

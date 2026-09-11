@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { api, STATUS_LABELS, STATUS_ORDER } from "../api.js";
+import Header from "../components/Header.jsx";
 
 export default function OrderDetail() {
   const { tenantId, orderId } = useParams();
@@ -49,10 +50,7 @@ export default function OrderDetail() {
 
   return (
     <div className="app-shell">
-      <header className="app-header">
-        <span className="brand">iTATech OS</span>
-        <span className="ticket-os">{order.numero_os}</span>
-      </header>
+      <Header right={order.numero_os} eyebrow="ficha da OS" />
 
       <span className={`status-tag status-${order.status}`}>
         {STATUS_LABELS[order.status]}
@@ -80,10 +78,8 @@ export default function OrderDetail() {
         Envie esse link pelo WhatsApp — o cliente acompanha o status sem precisar
         perguntar.
       </p>
-      <div className="ticket" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 8 }}>
-        <span style={{ fontFamily: "var(--font-mono)", fontSize: 13, wordBreak: "break-all" }}>
-          {linkPublico}
-        </span>
+      <div className="ticket link-box">
+        <span>{linkPublico}</span>
         <button className="btn btn-secondary" onClick={copiarLink}>
           {copiado ? "Copiado" : "Copiar"}
         </button>

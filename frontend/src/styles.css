@@ -1,18 +1,32 @@
 :root {
-  /* Cor: paleta de oficina — papel de ficha + carimbo */
+  /* Cor: paleta de oficina — papel de ficha + carimbo de etiqueta de conserto */
   --ink: #20241f;
-  --ink-soft: #4a4f43;
-  --paper: #ece8dd;
-  --paper-raised: #f7f5ee;
-  --line: #c7bfa9;
-  --rust: #b5502b; /* ação principal, "carimbo" */
-  --rust-dark: #8f3e21;
-  --copper: #3b6e64; /* status positivo (pronto/entregue) */
-  --amber: #c98a2b; /* status de espera */
-  --danger: #a23b2e; /* atrasado */
+  --ink-soft: #52584a;
+  --ink-faint: #8b9080;
+  --paper: #e9e4d6;
+  --paper-raised: #f8f6ef;
+  --paper-deep: #ddd6c2;
+  --line: #c2b89f;
+  --line-soft: #d8d0ba;
+  --rust: #b5502b;
+  --rust-dark: #8a3c20;
+  --rust-tint: #e7c3af;
+  --copper: #3b6e64;
+  --copper-tint: #c9dbd4;
+  --amber: #c98a2b;
+  --danger: #a23b2e;
 
+  --font-display: "Space Grotesk", "IBM Plex Sans", system-ui, sans-serif;
   --font-sans: "IBM Plex Sans", system-ui, sans-serif;
   --font-mono: "IBM Plex Mono", "SFMono-Regular", monospace;
+
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
 }
 
 * {
@@ -21,11 +35,17 @@
 
 body {
   margin: 0;
-  background: var(--paper);
+  background-color: var(--paper);
+  background-image:
+    linear-gradient(var(--line-soft) 1px, transparent 1px),
+    linear-gradient(90deg, var(--line-soft) 1px, transparent 1px);
+  background-size: 28px 28px;
+  background-position: -1px -1px;
   color: var(--ink);
   font-family: var(--font-sans);
   font-size: 16px;
-  line-height: 1.5;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
 }
 
 a {
@@ -33,60 +53,126 @@ a {
 }
 
 .app-shell {
-  max-width: 720px;
+  max-width: 640px;
   margin: 0 auto;
-  padding: 24px 20px 64px;
+  padding: var(--space-5) 20px 72px;
 }
 
-/* Cabeçalho estilo carimbo de ficha */
+/* ---------- Cabeçalho ---------- */
 .app-header {
   display: flex;
-  align-items: baseline;
+  align-items: flex-end;
   justify-content: space-between;
+  gap: var(--space-3);
+  padding-bottom: var(--space-3);
+  margin-bottom: var(--space-6);
   border-bottom: 2px solid var(--ink);
-  padding-bottom: 12px;
-  margin-bottom: 24px;
+  position: relative;
 }
 
-.app-header .brand {
+.app-header::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -5px;
+  height: 1px;
+  background: var(--line);
+}
+
+.brand-block {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--rust);
+}
+
+.brand-mark {
+  flex-shrink: 0;
+  margin-bottom: 2px;
+}
+
+.brand {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 17px;
+  color: var(--ink);
+  letter-spacing: -0.01em;
+}
+
+.brand-eyebrow {
   font-family: var(--font-mono);
-  font-weight: 600;
-  font-size: 15px;
-  letter-spacing: 0.02em;
+  font-size: 12px;
+  color: var(--ink-faint);
+  margin-top: 1px;
 }
 
-.app-header .tenant-name {
-  font-size: 15px;
+.header-right {
+  font-family: var(--font-mono);
+  font-size: 14px;
   color: var(--ink-soft);
+  text-align: right;
 }
 
+/* ---------- Tipografia ---------- */
 h1, h2, h3 {
-  font-family: var(--font-sans);
+  font-family: var(--font-display);
   font-weight: 600;
-  margin: 0 0 8px;
+  letter-spacing: -0.01em;
+  margin: 0 0 var(--space-2);
+  color: var(--ink);
 }
 
-h1 { font-size: 24px; }
-h2 { font-size: 18px; }
+h1 { font-size: 26px; margin-bottom: var(--space-3); }
+h2 {
+  font-size: 15px;
+  text-transform: none;
+  color: var(--ink-soft);
+  margin-top: var(--space-6);
+  padding-bottom: var(--space-1);
+  border-bottom: 1px solid var(--line-soft);
+}
 
 .subtle {
   color: var(--ink-soft);
   font-size: 14px;
 }
 
-/* Ficha / ticket */
+/* ---------- Ticket / ficha (tag de conserto) ---------- */
 .ticket {
+  position: relative;
   background: var(--paper-raised);
   border: 1px solid var(--line);
-  padding: 16px;
-  margin-bottom: 12px;
+  padding: var(--space-4) var(--space-4) var(--space-4) 28px;
+  margin-bottom: var(--space-3);
+  box-shadow: 2px 2px 0 var(--paper-deep);
+}
+
+.ticket::before {
+  /* furo de etiqueta */
+  content: "";
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--paper);
+  border: 1.5px solid var(--ink-faint);
+}
+
+.ticket-link {
+  text-decoration: none;
+  color: inherit;
+  display: block;
 }
 
 .ticket-row {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  gap: 12px;
+  gap: var(--space-3);
 }
 
 .ticket-os {
@@ -97,18 +183,22 @@ h2 { font-size: 18px; }
 }
 
 .ticket-meta {
-  font-size: 13px;
+  font-size: 14px;
   color: var(--ink-soft);
-  margin-top: 2px;
+  margin-top: 3px;
 }
 
-/* Etiqueta de status — carimbo, não pill com sombra */
+/* ---------- Etiqueta de status — carimbo levemente inclinado ---------- */
 .status-tag {
+  display: inline-block;
   font-family: var(--font-mono);
   font-size: 12px;
   font-weight: 600;
-  padding: 3px 8px;
+  letter-spacing: 0.02em;
+  padding: 4px 10px;
   border: 1.5px solid currentColor;
+  border-radius: 2px;
+  transform: rotate(-1.5deg);
   white-space: nowrap;
 }
 
@@ -118,16 +208,17 @@ h2 { font-size: 18px; }
 .status-pronto { color: var(--copper); }
 .status-entregue { color: var(--copper); }
 
-/* Formulários */
+/* ---------- Formulários ---------- */
 .field {
-  margin-bottom: 16px;
+  margin-bottom: var(--space-4);
 }
 
 .field label {
   display: block;
   font-size: 13px;
   color: var(--ink-soft);
-  margin-bottom: 4px;
+  margin-bottom: var(--space-1);
+  font-weight: 500;
 }
 
 .field input,
@@ -136,14 +227,22 @@ h2 { font-size: 18px; }
   width: 100%;
   background: var(--paper-raised);
   border: 1px solid var(--line);
-  padding: 10px;
+  padding: 11px 12px;
   font-family: var(--font-sans);
   font-size: 15px;
   color: var(--ink);
+  border-radius: 2px;
+}
+
+.field input:focus,
+.field textarea:focus {
+  outline: 2px solid var(--rust);
+  outline-offset: 1px;
+  border-color: var(--rust);
 }
 
 .field textarea {
-  min-height: 80px;
+  min-height: 90px;
   resize: vertical;
 }
 
@@ -152,19 +251,35 @@ h2 { font-size: 18px; }
   background: var(--rust);
   color: var(--paper-raised);
   border: none;
-  padding: 11px 18px;
+  padding: 12px 20px;
   font-family: var(--font-sans);
   font-weight: 600;
   font-size: 15px;
   cursor: pointer;
+  border-radius: 2px;
+  box-shadow: 0 2px 0 var(--rust-dark);
+  transition: transform 0.08s ease, box-shadow 0.08s ease;
 }
 
 .btn:hover { background: var(--rust-dark); }
+
+.btn:active {
+  transform: translateY(2px);
+  box-shadow: 0 0 0 var(--rust-dark);
+}
+
+.btn:disabled {
+  opacity: 0.55;
+  cursor: default;
+  box-shadow: none;
+  transform: none;
+}
 
 .btn-secondary {
   background: transparent;
   color: var(--ink);
   border: 1.5px solid var(--ink);
+  box-shadow: none;
 }
 
 .btn-secondary:hover { background: var(--ink); color: var(--paper-raised); }
@@ -176,26 +291,31 @@ h2 { font-size: 18px; }
   z-index: 10;
 }
 
-/* Linha do tempo pública — checkpoints reais, então numeração se justifica */
+.fab-new .btn {
+  box-shadow: 2px 3px 0 var(--rust-dark);
+}
+
+/* ---------- Linha do tempo pública ---------- */
 .timeline {
   list-style: none;
-  margin: 24px 0;
+  margin: var(--space-5) 0;
   padding: 0;
-  border-left: 2px solid var(--line);
+  border-left: 2px dashed var(--line);
+  margin-left: 4px;
 }
 
 .timeline li {
   position: relative;
-  padding: 4px 0 20px 20px;
+  padding: 2px 0 22px 22px;
 }
 
 .timeline li::before {
   content: "";
   position: absolute;
-  left: -7px;
-  top: 6px;
-  width: 12px;
-  height: 12px;
+  left: -9px;
+  top: 4px;
+  width: 14px;
+  height: 14px;
   background: var(--paper);
   border: 2px solid var(--line);
   border-radius: 50%;
@@ -209,6 +329,7 @@ h2 { font-size: 18px; }
 .timeline li.current::before {
   background: var(--rust);
   border-color: var(--rust);
+  box-shadow: 0 0 0 4px var(--rust-tint);
 }
 
 .timeline .step-label {
@@ -217,34 +338,53 @@ h2 { font-size: 18px; }
   font-size: 14px;
 }
 
-.timeline .step-date {
-  font-size: 13px;
-  color: var(--ink-soft);
+.timeline li.current .step-label {
+  color: var(--rust-dark);
 }
 
+.timeline .step-date {
+  font-size: 12px;
+  color: var(--ink-faint);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+/* ---------- Orçamento ---------- */
 .budget-table {
   width: 100%;
   border-collapse: collapse;
-  margin: 12px 0;
+  margin: var(--space-3) 0;
   font-size: 14px;
 }
 
 .budget-table td {
-  padding: 8px 0;
-  border-bottom: 1px solid var(--line);
+  padding: 9px 0;
+  border-bottom: 1px dashed var(--line);
 }
 
 .budget-total {
   font-family: var(--font-mono);
   font-weight: 600;
-  font-size: 18px;
+  font-size: 19px;
   text-align: right;
-  padding-top: 8px;
+  padding-top: var(--space-2);
+  color: var(--rust-dark);
 }
 
 .empty-state {
-  border: 1px dashed var(--line);
-  padding: 32px 20px;
+  border: 1.5px dashed var(--line);
+  padding: var(--space-6) 20px;
   text-align: center;
   color: var(--ink-soft);
+  background: var(--paper-raised);
+}
+
+.link-box {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-3);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  word-break: break-all;
 }

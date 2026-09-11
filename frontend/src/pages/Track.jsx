@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { api, STATUS_LABELS, STATUS_ORDER } from "../api.js";
+import Header from "../components/Header.jsx";
 
 export default function Track() {
   const { token } = useParams();
@@ -41,10 +42,7 @@ export default function Track() {
 
   return (
     <div className="app-shell">
-      <header className="app-header">
-        <span className="brand">iTATech OS</span>
-        <span className="ticket-os">{order.numero_os}</span>
-      </header>
+      <Header right={order.numero_os} eyebrow="acompanhamento" />
 
       <h1>Acompanhamento do serviço</h1>
       <p className="subtle">{order.defeito_relatado}</p>

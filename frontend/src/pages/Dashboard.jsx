@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { api, STATUS_LABELS } from "../api.js";
+import Header from "../components/Header.jsx";
 
 export default function Dashboard() {
   const { tenantId } = useParams();
@@ -21,10 +22,7 @@ export default function Dashboard() {
 
   return (
     <div className="app-shell">
-      <header className="app-header">
-        <span className="brand">iTATech OS</span>
-        {tenant && <span className="tenant-name">{tenant.nome}</span>}
-      </header>
+      <Header right={tenant?.nome} eyebrow="painel do prestador" />
 
       <h1>Ordens de serviço</h1>
       <p className="subtle">
@@ -41,11 +39,7 @@ export default function Dashboard() {
       )}
 
       {orders.map((o) => (
-        <Link
-          key={o.id}
-          to={`/painel/${tenantId}/os/${o.id}`}
-          style={{ textDecoration: "none", color: "inherit" }}
-        >
+        <Link key={o.id} to={`/painel/${tenantId}/os/${o.id}`} className="ticket-link">
           <div className="ticket">
             <div className="ticket-row">
               <div>
