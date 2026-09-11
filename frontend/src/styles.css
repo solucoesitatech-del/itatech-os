@@ -12,9 +12,9 @@
 
   --primary: #1e293b;
   --primary-dark: #14202f;
-  --accent: #e8622c;
-  --accent-dark: #c94e1e;
-  --accent-tint: #fce4d8;
+  --accent: #d6262a;
+  --accent-dark: #a81f22;
+  --accent-tint: #fbdadb;
 
   --status-recebido: #64748b;
   --status-em_analise: #2563eb;
@@ -22,7 +22,7 @@
   --status-pronto: #16a34a;
   --status-entregue: #0f7a3c;
 
-  --danger: #dc2626;
+  --danger: #9f1239;
 
   --font-sans: "Inter", system-ui, -apple-system, sans-serif;
   --font-mono: "IBM Plex Mono", "SFMono-Regular", monospace;
@@ -125,6 +125,14 @@ h2 { font-size: 14px; color: var(--ink-soft); font-weight: 600; margin-top: 0; }
   font-weight: 700;
   font-size: 15px;
   color: var(--ink);
+}
+
+.brand-logo {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+  border-radius: 6px;
+  flex-shrink: 0;
 }
 
 .sidebar-nav {

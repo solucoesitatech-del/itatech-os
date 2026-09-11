@@ -4,16 +4,6 @@ import { api } from "../api.js";
 import StatusBadge from "../components/StatusBadge.jsx";
 import StatusTimeline from "../components/StatusTimeline.jsx";
 
-function TagMark() {
-  return (
-    <svg width="26" height="26" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M11 5 Q16 0 21 5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-      <path d="M8 6 H24 V19 L16 28 L8 19 Z" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" fill="none" />
-      <circle cx="16" cy="11" r="2" stroke="currentColor" strokeWidth="2" />
-    </svg>
-  );
-}
-
 export default function Track() {
   const { token } = useParams();
   const [order, setOrder] = useState(null);
@@ -57,9 +47,7 @@ export default function Track() {
     <div className="public-page">
       <div className="public-card">
         <div className="public-brand">
-          <span style={{ color: "var(--accent)" }}>
-            <TagMark />
-          </span>
+          <img src="/logo.jpg" alt="iTATech" className="brand-logo" style={{ width: 40, height: 40 }} />
           <span className="brand-name">iTATech OS</span>
         </div>
 
