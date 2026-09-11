@@ -10,6 +10,12 @@ export default function Configuracoes() {
   const [salvando, setSalvando] = useState(false);
   const [salvo, setSalvo] = useState(false);
 
+  const [novaSenha, setNovaSenha] = useState("");
+  const [confirmarSenha, setConfirmarSenha] = useState("");
+  const [trocandoSenha, setTrocandoSenha] = useState(false);
+  const [erroSenha, setErroSenha] = useState(null);
+  const [senhaTrocada, setSenhaTrocada] = useState(false);
+
   useEffect(() => {
     api.getTenant(tenantId).then((t) => {
       setTenant(t);
@@ -33,6 +39,31 @@ export default function Configuracoes() {
     setSalvando(false);
     setSalvo(true);
     setTimeout(() => setSalvo(false), 2500);
+  }
+
+  async function trocarSenha(e) {
+    e.preventDefault();
+    setErroSenha(null);
+    if (novaSenha !== confirmarSenha) {
+      setErroSenha("As senhas não coincidem.");
+      return;
+    }
+    if (novaSenha.length < 4) {
+      setErroSenha("Use uma senha com pelo menos 4 caracteres.");
+      return;
+    }
+    setTrocandoSenha(true);
+    try {
+      await api.changePassword(tenantId, novaSenha);
+      setNovaSenha("");
+      setConfirmarSenha("");
+      setSenhaTrocada(true);
+      setTimeout(() => setSenhaTrocada(false), 2500);
+    } catch (e2) {
+      setErroSenha(e2.message);
+    } finally {
+      setTrocandoSenha(false);
+    }
   }
 
   return (
@@ -84,6 +115,39 @@ export default function Configuracoes() {
               {salvando ? "Salvando..." : "Salvar alterações"}
             </button>
             {salvo && <span className="subtle" style={{ color: "var(--status-pronto)" }}>Salvo!</span>}
+          </div>
+        </form>
+      )}
+
+      {tenant && (
+        <form onSubmit={trocarSenha} className="card">
+          <div className="card-title">Senha de acesso</div>
+          <div className="field">
+            <label htmlFor="novaSenha">Nova senha</label>
+            <input
+              id="novaSenha"
+              type="password"
+              required
+              value={novaSenha}
+              onChange={(e) => setNovaSenha(e.target.value)}
+            />
+          </div>
+          <div className="field">
+            <label htmlFor="confirmarSenha">Confirmar nova senha</label>
+            <input
+              id="confirmarSenha"
+              type="password"
+              required
+              value={confirmarSenha}
+              onChange={(e) => setConfirmarSenha(e.target.value)}
+            />
+          </div>
+          {erroSenha && <p className="subtle" style={{ color: "var(--danger)" }}>{erroSenha}</p>}
+          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+            <button className="btn btn-secondary" type="submit" disabled={trocandoSenha}>
+              {trocandoSenha ? "Salvando..." : "Trocar senha"}
+            </button>
+            {senhaTrocada && <span className="subtle" style={{ color: "var(--status-pronto)" }}>Senha atualizada!</span>}
           </div>
         </form>
       )}

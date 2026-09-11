@@ -246,6 +246,19 @@ h2 { font-size: 14px; color: var(--ink-soft); font-weight: 600; margin-top: 0; }
   color: var(--sidebar-text-muted);
 }
 
+.sidebar-logout {
+  background: none;
+  border: none;
+  color: var(--sidebar-text-muted);
+  cursor: pointer;
+  padding: 6px;
+  border-radius: var(--radius-sm);
+  flex-shrink: 0;
+  display: flex;
+}
+
+.sidebar-logout:hover { color: #fff; background: rgba(255, 255, 255, 0.08); }
+
 @media (max-width: 860px) {
   .sidebar { display: none; }
 }

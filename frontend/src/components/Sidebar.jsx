@@ -1,9 +1,17 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { NAV_ITEMS } from "./navItems.js";
+import { clearAuth } from "../api.js";
+import { IconLogout } from "./icons.jsx";
 
 export default function Sidebar({ tenantId, tenant, active, onNavigate }) {
+  const navigate = useNavigate();
   const initial = tenant?.nome ? tenant.nome.trim().charAt(0).toUpperCase() : "?";
+
+  function sair() {
+    clearAuth();
+    navigate("/entrar");
+  }
 
   return (
     <>
@@ -34,10 +42,13 @@ export default function Sidebar({ tenantId, tenant, active, onNavigate }) {
 
       <div className="sidebar-footer">
         <div className="sidebar-avatar">{initial}</div>
-        <div style={{ minWidth: 0 }}>
+        <div style={{ minWidth: 0, flex: 1 }}>
           <div className="sidebar-footer-name">{tenant?.nome || "Carregando..."}</div>
           <div className="sidebar-footer-role">Prestador</div>
         </div>
+        <button className="sidebar-logout" onClick={sair} title="Sair" aria-label="Sair">
+          <IconLogout />
+        </button>
       </div>
     </>
   );

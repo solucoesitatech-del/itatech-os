@@ -3,7 +3,14 @@ import { Link } from "react-router-dom";
 import { api } from "../api.js";
 
 const SESSION_KEY = "itatech_superadmin_auth";
-const initialForm = { nome: "", subdominio: "", categoria: "", telefone: "", whatsapp: "" };
+const initialForm = {
+  nome: "",
+  subdominio: "",
+  categoria: "",
+  telefone: "",
+  whatsapp: "",
+  senha: "",
+};
 
 function LoginGate({ onSuccess }) {
   const [senha, setSenha] = useState("");
@@ -59,6 +66,55 @@ function LoginGate({ onSuccess }) {
   );
 }
 
+function ResetPasswordRow({ tenant, onDone, onCancel }) {
+  const [senha, setSenha] = useState("");
+  const [salvando, setSalvando] = useState(false);
+  const [erro, setErro] = useState(null);
+
+  async function salvar(e) {
+    e.preventDefault();
+    setSalvando(true);
+    setErro(null);
+    try {
+      await api.resetTenantPassword(tenant.id, senha);
+      onDone();
+    } catch (e2) {
+      setErro(e2.message);
+      setSalvando(false);
+    }
+  }
+
+  return (
+    <form
+      onSubmit={salvar}
+      style={{ display: "flex", gap: 8, padding: "12px 0", borderBottom: "1px solid var(--border)" }}
+    >
+      <input
+        type="password"
+        placeholder={`Nova senha para ${tenant.nome}`}
+        required
+        autoFocus
+        value={senha}
+        onChange={(e) => setSenha(e.target.value)}
+        style={{
+          flex: 1,
+          border: "1px solid var(--border-strong)",
+          borderRadius: "var(--radius-sm)",
+          padding: "8px 10px",
+          fontSize: 14,
+        }}
+      />
+      <button className="btn btn-sm" type="submit" disabled={salvando}>
+        {salvando ? "Salvando..." : "Salvar"}
+      </button>
+      <button className="btn btn-secondary btn-sm" type="button" onClick={onCancel}>
+        Cancelar
+      </button>
+      {erro && <p className="subtle" style={{ color: "var(--danger)", width: "100%" }}>{erro}</p>}
+    </form>
+  );
+}
+
 function Painel() {
   const [tenants, setTenants] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -67,6 +123,7 @@ function Painel() {
   const [salvando, setSalvando] = useState(false);
   const [erro, setErro] = useState(null);
   const [criado, setCriado] = useState(null);
+  const [resettingId, setResettingId] = useState(null);
 
   function carregar() {
     api
@@ -85,7 +142,7 @@ function Painel() {
     setErro(null);
     try {
       const novo = await api.createTenant(form);
-      setCriado(novo);
+      setCriado({ ...novo, subdominioUsado: form.subdominio, senhaUsada: form.senha });
       setForm(initialForm);
       setShowForm(false);
       carregar();
@@ -135,10 +192,18 @@ function Painel() {
           <div className="card" style={{ borderLeft: "4px solid var(--status-pronto)" }}>
             <div className="card-title">Oficina criada com sucesso</div>
             <p style={{ marginTop: 0 }}>
-              Envie este link para <strong>{criado.nome}</strong> acessar o painel dela:
+              Passe estas informações para <strong>{criado.nome}</strong> acessar o painel dela em{" "}
+              <strong>{window.location.origin}/entrar</strong>:
             </p>
-            <div className="link-field">
-              {window.location.origin}/painel/{criado.id}
+            <div className="info-grid">
+              <div className="info-field">
+                <div className="label">Subdomínio</div>
+                <div className="value">{criado.subdominioUsado}</div>
+              </div>
+              <div className="info-field">
+                <div className="label">Senha</div>
+                <div className="value">{criado.senhaUsada}</div>
+              </div>
             </div>
           </div>
         )}
@@ -178,6 +243,17 @@ function Painel() {
               <label htmlFor="whatsapp">WhatsApp</label>
               <input id="whatsapp" value={form.whatsapp} onChange={set("whatsapp")} />
             </div>
+            <div className="field">
+              <label htmlFor="senha">Senha inicial de acesso</label>
+              <input
+                id="senha"
+                type="text"
+                required
+                placeholder="senha que a oficina vai usar para entrar"
+                value={form.senha}
+                onChange={set("senha")}
+              />
+            </div>
 
             {erro && <p className="subtle" style={{ color: "var(--danger)" }}>Não foi possível salvar: {erro}</p>}
 
@@ -205,17 +281,34 @@ function Painel() {
         {tenants.length > 0 && (
           <div className="card">
             {tenants.map((t) => (
-              <div key={t.id} className="card-list-item">
-                <div>
-                  <div className="card-list-os">{t.nome}</div>
-                  <div className="card-list-meta">
-                    {t.categoria} · {t.subdominio}
+              <React.Fragment key={t.id}>
+                <div className="card-list-item">
+                  <div>
+                    <div className="card-list-os">{t.nome}</div>
+                    <div className="card-list-meta">
+                      {t.categoria} · {t.subdominio}
+                    </div>
+                  </div>
+                  <div style={{ display: "flex", gap: 8 }}>
+                    <button
+                      className="btn btn-secondary btn-sm"
+                      onClick={() => setResettingId(resettingId === t.id ? null : t.id)}
+                    >
+                      Redefinir senha
+                    </button>
+                    <Link to={`/painel/${t.id}`} className="btn btn-secondary btn-sm">
+                      Abrir painel
+                    </Link>
                   </div>
                 </div>
-                <Link to={`/painel/${t.id}`} className="btn btn-secondary btn-sm">
-                  Abrir painel
-                </Link>
-              </div>
+                {resettingId === t.id && (
+                  <ResetPasswordRow
+                    tenant={t}
+                    onDone={() => setResettingId(null)}
+                    onCancel={() => setResettingId(null)}
+                  />
+                )}
+              </React.Fragment>
             ))}
           </div>
         )}

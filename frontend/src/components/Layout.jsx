@@ -1,16 +1,22 @@
 import React, { useEffect, useState } from "react";
-import { api } from "../api.js";
+import { useNavigate } from "react-router-dom";
+import { api, getAuth } from "../api.js";
 import Sidebar from "./Sidebar.jsx";
 import { IconMenu, IconClose } from "./icons.jsx";
 
 export default function Layout({ tenantId, active, children }) {
+  const navigate = useNavigate();
   const [tenant, setTenant] = useState(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   useEffect(() => {
-    if (tenantId) {
-      api.getTenant(tenantId).then(setTenant).catch(() => {});
+    const auth = getAuth();
+    if (!auth?.access_token || auth.tenant_id !== tenantId) {
+      navigate("/entrar", { replace: true });
+      return;
     }
+    api.getTenant(tenantId).then(setTenant).catch(() => {});
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tenantId]);
 
   return (

@@ -33,7 +33,22 @@ class Tenant(BaseModel):
     whatsapp: Optional[str] = None
     logo_url: Optional[str] = None
     ativo: bool = True
+    senha_hash: Optional[str] = None
     criado_em: datetime = Field(default_factory=datetime.utcnow)
+
+
+class TenantPublic(BaseModel):
+    """Versão do Tenant sem a senha, usada em toda resposta da API."""
+
+    id: str
+    nome: str
+    subdominio: str
+    categoria: str
+    telefone: Optional[str] = None
+    whatsapp: Optional[str] = None
+    logo_url: Optional[str] = None
+    ativo: bool = True
+    criado_em: datetime
 
 
 class TenantCreate(BaseModel):
@@ -42,6 +57,7 @@ class TenantCreate(BaseModel):
     categoria: str
     telefone: Optional[str] = None
     whatsapp: Optional[str] = None
+    senha: str
 
 
 class TenantUpdate(BaseModel):
@@ -50,6 +66,22 @@ class TenantUpdate(BaseModel):
     telefone: Optional[str] = None
     whatsapp: Optional[str] = None
     logo_url: Optional[str] = None
+
+
+class TenantSetPassword(BaseModel):
+    senha: str
+
+
+class TenantLogin(BaseModel):
+    subdominio: str
+    senha: str
+
+
+class TokenResponse(BaseModel):
+    access_token: str
+    token_type: str = "bearer"
+    tenant_id: str
+    tenant_nome: str
 
 
 # ---------- Customer ----------

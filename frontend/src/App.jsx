@@ -11,10 +11,12 @@ import Estoque from "./pages/Estoque.jsx";
 import Configuracoes from "./pages/Configuracoes.jsx";
 import Placeholder from "./pages/Placeholder.jsx";
 import SuperAdmin from "./pages/SuperAdmin.jsx";
+import Login from "./pages/Login.jsx";
 
 export default function App() {
   return (
     <Routes>
+      <Route path="/entrar" element={<Login />} />
       <Route path="/superadmin" element={<SuperAdmin />} />
       <Route path="/painel/:tenantId" element={<Dashboard />} />
       <Route path="/painel/:tenantId/visao-geral" element={<Overview />} />
@@ -35,7 +37,7 @@ export default function App() {
         }
       />
       <Route path="/acompanhar/:token" element={<Track />} />
-      <Route path="*" element={<Navigate to="/superadmin" replace />} />
+      <Route path="*" element={<Navigate to="/entrar" replace />} />
     </Routes>
   );
 }

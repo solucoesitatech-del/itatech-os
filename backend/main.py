@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import os
 
-from routers import tenants, customers, service_orders, payments, stock
+from routers import tenants, customers, service_orders, payments, stock, auth
 
 app = FastAPI(title="iTATech OS - Ordem de Serviço")
 
@@ -17,6 +17,7 @@ app.add_middleware(
 )
 
 app.include_router(tenants.router)
+app.include_router(auth.router)
 app.include_router(customers.router)
 app.include_router(customers.equipment_router)
 app.include_router(service_orders.router)
