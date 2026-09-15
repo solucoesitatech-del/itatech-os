@@ -62,9 +62,9 @@ export default function Layout({ tenantId, active, children }) {
           </button>
           <span className="brand-name" style={{ display: "flex", alignItems: "center", gap: 8 }}>
             <span className="brand-logo-chip" style={{ width: 26, height: 26 }}>
-              <img src="/logo.jpg" alt="iTATech" className="brand-logo" />
+              <img src={tenant?.logo_url || "/logo.jpg"} alt={tenant?.nome || "Logo"} className="brand-logo" />
             </span>
-            iTATech OS
+            {tenant?.nome || "Carregando..."}
           </span>
         </div>
         <main className="content-area">{children}</main>

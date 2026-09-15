@@ -166,6 +166,14 @@ class StatusUpdate(BaseModel):
     novo_status: OrderStatus
 
 
+class PublicServiceOrder(ServiceOrder):
+    """Versão do ServiceOrder devolvida no link público de acompanhamento,
+    já com o nome e a logo da oficina para exibir a marca dela, não a nossa."""
+
+    tenant_nome: str
+    tenant_logo_url: Optional[str] = None
+
+
 # ---------- Status History ----------
 class StatusHistoryEntry(BaseModel):
     id: str = Field(default_factory=new_id)

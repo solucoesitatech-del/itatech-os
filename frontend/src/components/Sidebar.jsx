@@ -17,9 +17,9 @@ export default function Sidebar({ tenantId, tenant, active, onNavigate }) {
     <>
       <div className="sidebar-brand">
         <span className="brand-logo-chip">
-          <img src="/logo.jpg" alt="iTATech" className="brand-logo" />
+          <img src={tenant?.logo_url || "/logo.jpg"} alt={tenant?.nome || "Logo"} className="brand-logo" />
         </span>
-        <span className="brand-name">iTATech OS</span>
+        <span className="brand-name">{tenant?.nome || "Carregando..."}</span>
       </div>
 
       <nav className="sidebar-nav">

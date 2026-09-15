@@ -8,8 +8,9 @@ from models.schemas import (
     StatusHistoryEntry,
     Budget,
     BudgetItem,
+    PublicServiceOrder,
 )
-from database import service_orders_collection, status_history_collection
+from database import service_orders_collection, status_history_collection, tenants_collection
 from auth import get_current_tenant_id, check_tenant_match
 
 router = APIRouter(prefix="/api/service-orders", tags=["service_orders"])
@@ -111,12 +112,15 @@ async def set_budget(
 public_router = APIRouter(prefix="/api/acompanhar", tags=["public_tracking"])
 
 
-@public_router.get("/{token_publico}", response_model=ServiceOrder)
+@public_router.get("/{token_publico}", response_model=PublicServiceOrder)
 async def track_order(token_publico: str):
     order = await service_orders_collection.find_one({"token_publico": token_publico})
     if not order:
         raise HTTPException(status_code=404, detail="Link inválido ou expirado")
-    return ServiceOrder(**order)
+    tenant = await tenants_collection.find_one({"id": order["tenant_id"]})
+    tenant_nome = tenant["nome"] if tenant else "Assistência técnica"
+    tenant_logo_url = tenant.get("logo_url") if tenant else None
+    return PublicServiceOrder(**order, tenant_nome=tenant_nome, tenant_logo_url=tenant_logo_url)
 
 
 @public_router.post("/{token_publico}/aprovar-orcamento", response_model=ServiceOrder)

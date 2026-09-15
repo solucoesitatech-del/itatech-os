@@ -79,8 +79,25 @@ export const api = {
 
   // Tenant
   getTenant: (id) => request(`/api/tenants/${id}`),
+  getTenantBySubdomain: (subdominio) => request(`/api/tenants/subdominio/${subdominio}`),
   updateTenant: (id, data) =>
     request(`/api/tenants/${id}`, { method: "PATCH", body: JSON.stringify(data) }),
+  uploadLogo: (id, file) => {
+    const form = new FormData();
+    form.append("file", file);
+    const auth = getAuth();
+    return fetch(`${BASE_URL}/api/tenants/${id}/logo`, {
+      method: "POST",
+      headers: auth?.access_token ? { Authorization: `Bearer ${auth.access_token}` } : {},
+      body: form,
+    }).then(async (res) => {
+      if (!res.ok) {
+        const detail = await res.json().catch(() => ({}));
+        throw new Error(detail.detail || "Não foi possível enviar a imagem");
+      }
+      return res.json();
+    });
+  },
 
   // Painel do dono (/superadmin)
   listTenants: () => superadminRequest(`/api/tenants/`),

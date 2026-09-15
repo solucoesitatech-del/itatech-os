@@ -10,6 +10,9 @@ export default function Configuracoes() {
   const [salvando, setSalvando] = useState(false);
   const [salvo, setSalvo] = useState(false);
 
+  const [enviandoLogo, setEnviandoLogo] = useState(false);
+  const [erroLogo, setErroLogo] = useState(null);
+
   const [novaSenha, setNovaSenha] = useState("");
   const [confirmarSenha, setConfirmarSenha] = useState("");
   const [trocandoSenha, setTrocandoSenha] = useState(false);
@@ -29,6 +32,22 @@ export default function Configuracoes() {
   }, [tenantId]);
 
   const set = (campo) => (e) => setForm({ ...form, [campo]: e.target.value });
+
+  async function enviarLogo(e) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setErroLogo(null);
+    setEnviandoLogo(true);
+    try {
+      const { logo_url } = await api.uploadLogo(tenantId, file);
+      setTenant((t) => ({ ...t, logo_url }));
+    } catch (e2) {
+      setErroLogo(e2.message);
+    } finally {
+      setEnviandoLogo(false);
+      e.target.value = "";
+    }
+  }
 
   async function salvar(e) {
     e.preventDefault();
@@ -80,6 +99,36 @@ export default function Configuracoes() {
       {tenant && (
         <form onSubmit={salvar} className="card">
           <div className="card-title">Dados da oficina</div>
+
+          <div className="field">
+            <label>Logo</label>
+            <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+              <span className="brand-logo-chip" style={{ width: 56, height: 56 }}>
+                <img
+                  src={tenant.logo_url || "/logo.jpg"}
+                  alt={tenant.nome}
+                  className="brand-logo"
+                />
+              </span>
+              <div>
+                <label htmlFor="logo-input" className="btn btn-secondary" style={{ cursor: "pointer" }}>
+                  {enviandoLogo ? "Enviando..." : "Trocar logo"}
+                </label>
+                <input
+                  id="logo-input"
+                  type="file"
+                  accept="image/*"
+                  onChange={enviarLogo}
+                  disabled={enviandoLogo}
+                  style={{ display: "none" }}
+                />
+                <p className="faint" style={{ marginTop: 6 }}>
+                  Aparece no seu painel e no link de acompanhamento enviado aos seus clientes.
+                </p>
+              </div>
+            </div>
+            {erroLogo && <p className="subtle" style={{ color: "var(--danger)" }}>{erroLogo}</p>}
+          </div>
 
           <div className="field">
             <label htmlFor="nome">Nome</label>

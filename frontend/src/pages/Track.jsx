@@ -47,8 +47,13 @@ export default function Track() {
     <div className="public-page">
       <div className="public-card">
         <div className="public-brand">
-          <img src="/logo.jpg" alt="iTATech" className="brand-logo" style={{ width: 40, height: 40 }} />
-          <span className="brand-name">iTATech OS</span>
+          <img
+            src={order.tenant_logo_url || "/logo.jpg"}
+            alt={order.tenant_nome}
+            className="brand-logo"
+            style={{ width: 40, height: 40 }}
+          />
+          <span className="brand-name">{order.tenant_nome}</span>
         </div>
 
         <div className="public-os-number">OS #{order.numero_os.replace(/^OS-/, "")}</div>
@@ -88,6 +93,10 @@ export default function Track() {
             )}
           </div>
         )}
+
+        <p className="faint" style={{ textAlign: "center", marginTop: 24 }}>
+          Sistema by iTATech
+        </p>
       </div>
     </div>
   );

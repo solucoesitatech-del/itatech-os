@@ -1,4 +1,5 @@
-from fastapi import APIRouter, HTTPException, Depends
+from fastapi import APIRouter, HTTPException, Depends, UploadFile, File
+import base64
 from typing import List
 from models.schemas import (
     Tenant,
@@ -105,3 +106,23 @@ async def reset_password(tenant_id: str, data: TenantSetPassword):
         {"id": tenant_id}, {"$set": {"senha_hash": hash_password(data.senha)}}
     )
     return {"ok": True}
+
+
+@router.post("/{tenant_id}/logo")
+async def upload_logo(
+    tenant_id: str,
+    file: UploadFile = File(...),
+    current_tenant_id: str = Depends(get_current_tenant_id),
+):
+    """A própria oficina envia a sua logo, que passa a aparecer no painel
+    dela e no link público de acompanhamento enviado ao cliente final."""
+    check_tenant_match(current_tenant_id, tenant_id)
+    if not (file.content_type or "").startswith("image/"):
+        raise HTTPException(status_code=400, detail="Envie um arquivo de imagem")
+    data = await file.read()
+    if len(data) > 2 * 1024 * 1024:
+        raise HTTPException(status_code=400, detail="Imagem muito grande (máximo 2MB)")
+    encoded = base64.b64encode(data).decode()
+    logo_url = f"data:{file.content_type};base64,{encoded}"
+    await tenants_collection.update_one({"id": tenant_id}, {"$set": {"logo_url": logo_url}})
+    return {"logo_url": logo_url}
