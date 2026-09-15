@@ -2,9 +2,17 @@ from fastapi import APIRouter, HTTPException, Depends
 from typing import List
 from models.schemas import Customer, CustomerCreate, Equipment, EquipmentCreate
 from database import customers_collection, equipment_collection
-from auth import get_current_tenant_id, check_tenant_match
+from auth import get_current_tenant_id, check_tenant_match, encrypt_field, decrypt_field
 
 router = APIRouter(prefix="/api/customers", tags=["customers"])
+
+
+def _decrypt_customer(c: dict) -> dict:
+    c["nome"] = decrypt_field(c.get("nome"))
+    c["telefone"] = decrypt_field(c.get("telefone"))
+    c["email"] = decrypt_field(c.get("email"))
+    c["endereco"] = decrypt_field(c.get("endereco"))
+    return c
 
 
 @router.post("/", response_model=Customer)
@@ -13,7 +21,12 @@ async def create_customer(
 ):
     check_tenant_match(current_tenant_id, data.tenant_id)
     customer = Customer(**data.dict())
-    await customers_collection.insert_one(customer.dict())
+    doc = customer.dict()
+    doc["nome"] = encrypt_field(doc["nome"])
+    doc["telefone"] = encrypt_field(doc["telefone"])
+    doc["email"] = encrypt_field(doc["email"])
+    doc["endereco"] = encrypt_field(doc["endereco"])
+    await customers_collection.insert_one(doc)
     return customer
 
 
@@ -23,7 +36,7 @@ async def list_customers_by_tenant(
 ):
     check_tenant_match(current_tenant_id, tenant_id)
     customers = await customers_collection.find({"tenant_id": tenant_id}).to_list(1000)
-    return [Customer(**c) for c in customers]
+    return [Customer(**_decrypt_customer(c)) for c in customers]
 
 
 @router.get("/{customer_id}", response_model=Customer)
@@ -34,7 +47,7 @@ async def get_customer(
     if not customer:
         raise HTTPException(status_code=404, detail="Cliente não encontrado")
     check_tenant_match(current_tenant_id, customer["tenant_id"])
-    return Customer(**customer)
+    return Customer(**_decrypt_customer(customer))
 
 
 @router.get("/{customer_id}/equipamentos", response_model=List[Equipment])

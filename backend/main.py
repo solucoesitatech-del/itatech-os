@@ -3,11 +3,16 @@ from fastapi.middleware.cors import CORSMiddleware
 import os
 
 from routers import tenants, customers, service_orders, payments, stock, auth
+from database import login_attempts_collection
 
 app = FastAPI(title="iTATech OS - Ordem de Serviço")
 
-# CORS liberado para os subdomínios de cada tenant (ajustar em produção)
-CORS_ORIGIN_REGEX = os.environ.get("CORS_ORIGIN_REGEX", ".*")
+# CORS: antes o padrão era ".*" (liberado pra qualquer site) quando a variável
+# não estava configurada. Agora, sem configuração explícita, só o domínio oficial
+# do itatech-os é aceito. Ajuste CORS_ORIGIN_REGEX no Render se usar outro domínio.
+CORS_ORIGIN_REGEX = os.environ.get(
+    "CORS_ORIGIN_REGEX", r"^https://([a-z0-9-]+\.)?itatech-os\.com\.br$"
+)
 app.add_middleware(
     CORSMiddleware,
     allow_origin_regex=CORS_ORIGIN_REGEX,
@@ -24,6 +29,11 @@ app.include_router(service_orders.router)
 app.include_router(service_orders.public_router)
 app.include_router(payments.router)
 app.include_router(stock.router)
+
+
+@app.on_event("startup")
+async def startup():
+    await login_attempts_collection.create_index("criado_em", expireAfterSeconds=900)
 
 
 @app.get("/api/health")

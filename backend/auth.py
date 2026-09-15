@@ -3,12 +3,37 @@ import time
 import bcrypt
 import jwt
 from fastapi import Header, HTTPException
+from cryptography.fernet import Fernet, InvalidToken
 
-JWT_SECRET = os.environ.get("JWT_SECRET", "dev-secret-troque-em-producao")
+# Antes havia um valor padrão ("dev-secret-troque-em-producao") caso a variável
+# não estivesse configurada — isso permitia forjar tokens válidos em produção
+# se a env var fosse esquecida. Agora a aplicação não sobe sem ela.
+JWT_SECRET = os.environ["JWT_SECRET"]
 JWT_ALGORITHM = "HS256"
 TOKEN_EXP_SECONDS = 60 * 60 * 24 * 30  # 30 dias
 
 SUPERADMIN_KEY = os.environ.get("SUPERADMIN_KEY")
+
+# Chave para criptografar dados pessoais do cliente (nome, telefone, email, endereço) em repouso.
+# Gerar uma chave nova com: python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())"
+DATA_ENCRYPTION_KEY = os.environ["DATA_ENCRYPTION_KEY"]
+fernet = Fernet(DATA_ENCRYPTION_KEY.encode())
+
+
+def encrypt_field(value: str | None) -> str | None:
+    if not value:
+        return value
+    return fernet.encrypt(value.encode()).decode()
+
+
+def decrypt_field(value: str | None) -> str | None:
+    if not value:
+        return value
+    try:
+        return fernet.decrypt(value.encode()).decode()
+    except InvalidToken:
+        # Dado legado salvo antes da criptografia entrar em vigor
+        return value
 
 
 def hash_password(senha: str) -> str:
